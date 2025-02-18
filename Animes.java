@@ -59,7 +59,7 @@ public class Animes{
         // Atribui os valores as variaveis
         this.id = Integer.parseInt(buffer[0].trim());
         this.name = buffer[1].trim();
-        this.type = buffer[2].trim();
+        this.type = buffer[2];
         this.episodes = Integer.parseInt(buffer[3].trim());
         this.rating = Float.parseFloat(buffer[4].trim());
 
@@ -73,10 +73,12 @@ public class Animes{
         // Processa os generos (se existirem)
         if (buffer.length > 6 && !buffer[6].trim().isEmpty()) {
             String genres = buffer[6].trim();
-            // Remove aspas se existirem
+
+            // Remove aspas se existirem (if recomendado por deepseek)
             if (genres.startsWith("\"") && genres.endsWith("\"")) {
                 genres = genres.substring(1, genres.length() - 1);
             }
+            
             // Divide os generos por virgula (caso haja mais de um)
             String[] genresArray = genres.split(",");
             for (String genre : genresArray) {
