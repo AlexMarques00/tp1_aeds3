@@ -1,0 +1,17 @@
+ultima id utilizada no inicio
+
+para cada objeto:
+    short tamanho do objeto
+    byte de lápide ('*' para morto e ' ' para vivo)
+    int id
+    short tamanho do nome
+    string nome
+    string type (tam = 5 bytes)
+    short episodes
+    float rating
+    short year
+    short tamanho dos genres
+    string genres ("Drama, Romance")
+    string season (tam = 5 bytes) (if season == "" -> write "     ")
+    short tamanho do studio
+    string studio
