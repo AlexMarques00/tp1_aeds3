@@ -1,4 +1,7 @@
-ultima id utilizada no inicio
+// ID,Name,Type,Episodes,Rating,Realease_year,Genres,Release_season,Studio
+
+
+int ultima id utilizada
 
 para cada objeto:
     short tamanho do objeto
@@ -12,6 +15,7 @@ para cada objeto:
     short year
     short tamanho dos genres
     string genres ("Drama, Romance")
-    string season (tam = 5 bytes) (if season == "" -> write "     ")
+    short tamanho da season
+    string season
     short tamanho do studio
     string studio

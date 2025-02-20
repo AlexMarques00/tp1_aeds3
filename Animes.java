@@ -1,29 +1,32 @@
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.util.ArrayList;
 
 public class Animes{
     // Atributos
     // ID,Name,Type,Episodes,Rating,Realease_year,Genres,Release_season,Studio
     private int id;
-    private int episodes;
-    private int year;
-    private float rating;
     private String name;
     private String type;
+    private int episodes;
+    private float rating;
+    private int year;
+    private ArrayList<String> genres;
     private String season;
     private String studio;
-    private ArrayList<String> genres;
 
+    // ID,Name,Type,Episodes,Rating,Realease_year,Genres,Release_season,Studio
     //Costrutor 01
-    public Animes (int id, int episodes, int year, float rating, String name, String type, String season, String studio, ArrayList<String> genres) {
+    public Animes(int id, String name, String type, int episodes, float rating, int year, ArrayList<String> genres, String season, String studio) {
         this.id = id;
-        this.episodes = episodes;
-        this.year = year;
-        this.rating = rating;
         this.name = name;
         this.type = type;
+        this.episodes = episodes;
+        this.rating = rating;
+        this.year = year;
+        this.genres = genres;
         this.season = season;
         this.studio = studio;
-        this.genres = genres;
     }
 
     //Construtor 02
@@ -91,17 +94,34 @@ public class Animes{
         }
 
         // Atribui a temporada e o estudio, se existirem
-        if (buffer.length > 8 && !buffer[8].trim().isEmpty()) {
-            this.season = buffer[8].trim();
+        if (buffer.length > 7 && !buffer[7].trim().isEmpty()) {
+            this.season = buffer[7].trim();
         } else {
             this.season = "Vazio"; // Valor padrao
         }
 
-        if (buffer.length > 9 && !buffer[9].trim().isEmpty()) {
-            this.studio = buffer[9].trim();
+        if (buffer.length > 8 && !buffer[8].trim().isEmpty()) {
+            this.studio = buffer[8].trim();
         } else {
             this.studio = "Vazio"; // Valor padrao
         }
+    }
+
+    public byte[] toByteArray() throws Exception{
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+
+        dos.writeInt(id);
+        dos.writeUTF(name);
+        dos.writeBytes(type);
+        dos.writeShort(episodes);
+        dos.writeFloat(rating);
+        dos.writeShort(year);
+        dos.writeUTF(genres.toString());
+        dos.writeUTF(season);
+        dos.writeUTF(studio);
+
+        return baos.toByteArray();
     }
 
     public int getId() {
