@@ -105,13 +105,13 @@ public class Ordenacao {
 
         // Ordena a sessão
         selecao(sessao, sessaoSize);
-        // Escreve os objetos da sessão
-        for (int i = 0; i < sessaoSize; i++) {
-            if (sessao[i] != null) { // Verifica se o objeto não é nulo
-                sessao[i].write();
-            }
+        for(int i = 0; i < sessaoSize; i++){
+            tmpArqs[currentFile].create(sessao[i]);
         }
-        break;
+        currentFile++;
+        if(currentFile == numArquivos){
+            currentFile = 0;
+        }
     }
 
     // Fecha os arquivos temporários
