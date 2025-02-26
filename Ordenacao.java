@@ -122,18 +122,7 @@ public class Ordenacao {
     }
 
     for(int i = 0; i < numSessoesPorArq; i++){
-        int arrayIds[] = new int[numArquivos];
-        for(int j = 0; j < numObjetos; j++){
-            for(int k = 0; k < numArquivos; k++){
-                lapide = tmpArqs[k].arq.readChar();
-                int tamanhoRegistro = arq.arq.readShort();
-                int id = tmpArqs[k].arq.readInt();
-                arrayIds[k] = id;
-                tmpArqs[k].arq.seek(tmpArqs[k].arq.getFilePointer() + tamanhoRegistro - 4);
-            }
-            // merge
-            
-        }
+        
     }
 
 
