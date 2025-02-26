@@ -4,8 +4,8 @@
 int ultima id utilizada
 
 para cada objeto:
+    2 bytes de lápide ('*' para morto e ' ' para vivo)
     short tamanho do objeto
-    byte de lápide ('*' para morto e ' ' para vivo)
     int id
     short tamanho do nome
     string nome
