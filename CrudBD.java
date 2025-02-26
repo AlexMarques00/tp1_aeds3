@@ -18,7 +18,7 @@ public class CrudBD {
         Arquivo arq = new Arquivo("animeDataBase.db");
         
         while (keepGoing) {
-            
+
             for (int i = 0; i < 50; i++) {
                 System.out.print("-");
             }
@@ -163,9 +163,11 @@ public class CrudBD {
                         System.out.println("* O ELEMENTO FOI EXCLUÍDO COM SUCESSO"); 
                     }  
                     break;
+
                 case 0:
                     keepGoing = false;
                     break;
+                    
                 default:
                     System.out.println("* NÃO EXISTE ESTA OPÇÃO.");
                     break;
