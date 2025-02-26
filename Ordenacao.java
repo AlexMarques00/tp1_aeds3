@@ -62,50 +62,63 @@ public class Ordenacao {
         sc.close();
     }
 
-    public static void ordenarNaoOtimizado(Arquivo arq, int numArquivos, int numObjetos) throws Exception{
-        Animes anime = new Animes();
-        char lapide;
-        Arquivo tmpArqs[] = new Arquivo[numArquivos*2];
-        for(int i = 0; i < numArquivos*2; i++){
-            tmpArqs[i] = new Arquivo("arq"+i+".db");
-            File file = new File("arq"+i+".db");
-            file.deleteOnExit();
+    public static void ordenarNaoOtimizado(Arquivo arq, int numArquivos, int numObjetos) throws Exception {
+    char lapide;
+    Arquivo tmpArqs[] = new Arquivo[numArquivos * 2];
+    for (int i = 0; i < numArquivos * 2; i++) {
+        tmpArqs[i] = new Arquivo("arq" + i + ".db");
+        File file = new File("arq" + i + ".db");
+        file.deleteOnExit();
+    }
+
+    // Pula o cabeçalho
+    arq.arq.seek(4);
+    int currentFile = 0;
+    // Loop para ler todos os registros
+    while (arq.arq.getFilePointer() < arq.arq.length()) {
+        Animes sessao[] = new Animes[numObjetos]; // Reinicializa o array a cada sessão
+        int sessaoSize = 0; // Contador de objetos válidos na sessão atual
+
+        // Preenche a sessão com até numObjetos registros
+        for (int i = 0; i < numObjetos; i++) {
+            if (arq.arq.getFilePointer() >= arq.arq.length()) {
+                break; // Sai do loop se atingir o final do arquivo
+            }
+
+            lapide = arq.arq.readChar();
+            int tamanhoRegistro = arq.arq.readShort();
+
+            // Lê os bytes do registro
+            byte[] ba = new byte[tamanhoRegistro];
+            arq.arq.read(ba);
+
+            // Verifica se o registro não está marcado como excluído
+            if (lapide == ' ') {
+                Animes anime = new Animes();
+                anime.fromByteArray(ba);
+                sessao[sessaoSize] = anime; // Adiciona o objeto ao array
+                sessaoSize++; // Incrementa o contador de objetos válidos
+            } else {
+                i--;
+            }
         }
 
-        // Pula o cabeçalho
-        arq.arq.seek(4);
-        Animes sessao[] = new Animes[numObjetos];
-        // Loop para ler todos os registros
-        while (arq.arq.getFilePointer() < arq.arq.length()) {
-            for(int i = 0; i < numObjetos; i++){
-
-                lapide = arq.arq.readChar();
-                int tamanhoRegistro = arq.arq.readShort();
-        
-                // Lê os bytes do registro
-                byte[] ba = new byte[tamanhoRegistro];
-                arq.arq.read(ba);
-
-                // Cria uma nova instância de Animes para cada posição do array
-                anime = new Animes();
-                anime.fromByteArray(ba);
-        
-                // Verifica se o registro não está marcado como excluído
-                if (lapide == ' ') {
-                    sessao[i] = anime;
-                }
-                
-            }
-            selecao(sessao, numObjetos);
-            for(int i = 0; i < numObjetos; i++){
+        // Ordena a sessão
+        selecao(sessao, sessaoSize);
+        // Escreve os objetos da sessão
+        for (int i = 0; i < sessaoSize; i++) {
+            if (sessao[i] != null) { // Verifica se o objeto não é nulo
                 sessao[i].write();
             }
         }
-
-        for(int i = 0; i < numArquivos*2; i++){
-            tmpArqs[i].close();
-        }
+        break;
     }
+
+    // Fecha os arquivos temporários
+    for (int i = 0; i < numArquivos * 2; i++) {
+        tmpArqs[i].close();
+    }
+}
 
     public static void ordenarOtimizado1(Arquivo arq, int numArquivos, int numObjetos) throws Exception{
         
