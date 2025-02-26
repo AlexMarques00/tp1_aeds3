@@ -112,6 +112,34 @@ public class Ordenacao {
             currentFile = 0;
         }
     }
+    
+    arq.arq.seek(0);
+    int maxID = arq.arq.readInt();
+    int numSessoesPorArq = maxID / numArquivos / numObjetos;
+    // intercalacao
+    for(int k = 0; k < numArquivos; k++){
+        tmpArqs[k].arq.seek(0);
+    }
+
+    for(int i = 0; i < numSessoesPorArq; i++){
+        int arrayIds[] = new int[numArquivos];
+        for(int j = 0; j < numObjetos; j++){
+            for(int k = 0; k < numArquivos; k++){
+                lapide = tmpArqs[k].arq.readChar();
+                int tamanhoRegistro = arq.arq.readShort();
+                int id = tmpArqs[k].arq.readInt();
+                arrayIds[k] = id;
+                tmpArqs[k].arq.seek(tmpArqs[k].arq.getFilePointer() + tamanhoRegistro - 4);
+            }
+            // merge
+            
+        }
+    }
+
+
+
+
+
 
     // Fecha os arquivos temporários
     for (int i = 0; i < numArquivos * 2; i++) {
