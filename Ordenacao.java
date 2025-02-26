@@ -124,12 +124,7 @@ public class Ordenacao {
     for(int i = 0; i < numSessoesPorArq; i++){
         
     }
-
-
-
-
-
-
+    
     // Fecha os arquivos temporários
     for (int i = 0; i < numArquivos * 2; i++) {
         tmpArqs[i].close();
