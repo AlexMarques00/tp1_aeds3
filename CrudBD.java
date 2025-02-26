@@ -73,7 +73,7 @@ public class CrudBD {
 
                     year = new MyDate(dia, mes, ano);
 
-                    System.out.print("* DIGITE OS GÊNEROS (NO MÁXIMO 2) (EXEMPLO: \"ROMANCE, DRAMA\"): ");
+                    System.out.print("* DIGITE OS GÊNEROS (NO MÁXIMO 2) (EXEMPLO: ROMANCE, DRAMA): ");
                     String genre = sc.nextLine();
                     genres.clear();
                     genres.add(genre.trim());

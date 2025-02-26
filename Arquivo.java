@@ -48,7 +48,7 @@ public class Arquivo {
         }
 
         if (resp2 == false) {
-            System.out.println("* OBJETO EXCLUÍDO!");
+            System.out.println("* OBJETO EXCLUÍDO OU NÃO EXISTE!");
         } else if (resp == true && id < 18495) {
             System.out.println("* OBJETO DESLOCADO PARA O FIM DO ARQUIVO!");
         }
@@ -86,12 +86,6 @@ public class Arquivo {
                     arq.write(objeto2);
                     System.out.println("* OBJETO ATUALIZADO NO MESMO LOCAL COM SUCESSO!");
                 } else {
-                    // Atualiza Cabeçalho
-                    arq.seek(0);
-                    int new_cabecalho = arq.readInt() + 1;
-                    arq.seek(0);
-                    arq.writeInt(new_cabecalho);
-    
                     // Marca o registro antigo como excluído
                     arq.seek(posicaoInicialRegistro);
                     arq.writeChar('*');
