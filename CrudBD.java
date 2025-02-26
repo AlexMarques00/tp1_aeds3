@@ -13,35 +13,32 @@ public class CrudBD {
         String season;
         String studio;
         ArrayList<String> genres = new ArrayList<>();
-
+        boolean keepGoing = true;
         Animes novo_anime;   
         Arquivo arq = new Arquivo("animeDataBase.db");
-
-        for (int i = 0; i < 50; i++) {
-            System.out.print("-");
-        }
-
-        System.out.println();
-        System.out.println("              MENU CRUD                ");
-        System.out.println("        * DIGITE 1 PARA CREATE         ");
-        System.out.println("        * DIGITE 2 PARA READ           ");
-        System.out.println("        * DIGITE 3 PARA UPDATE         ");
-        System.out.println("        * DIGITE 4 PARA DELETE         ");
-        System.out.println("        * DIGITE 0 PARA SAIR           ");
         
-        for (int i = 0; i < 50; i++) {
-            System.out.print("-");
-        }
-        System.out.println();
+        while (keepGoing) {
+            
+            for (int i = 0; i < 50; i++) {
+                System.out.print("-");
+            }
+    
+            System.out.println();
+            System.out.println("              MENU CRUD                ");
+            System.out.println("        * DIGITE 1 PARA CREATE         ");
+            System.out.println("        * DIGITE 2 PARA READ           ");
+            System.out.println("        * DIGITE 3 PARA UPDATE         ");
+            System.out.println("        * DIGITE 4 PARA DELETE         ");
+            System.out.println("        * DIGITE 0 PARA SAIR           ");
+            
+            for (int i = 0; i < 50; i++) {
+                System.out.print("-");
+            }
+            System.out.println();
 
-        while (true) {    
             System.out.print("        * ENTRADA: ");
             int crud = sc.nextInt();
             sc.nextLine();
-            
-            if (crud == 0) {
-                break;
-            }
 
             switch (crud) {
                 case 1: 
@@ -166,13 +163,14 @@ public class CrudBD {
                         System.out.println("* O ELEMENTO FOI EXCLUÍDO COM SUCESSO"); 
                     }  
                     break;
-
+                case 0:
+                    keepGoing = false;
+                    break;
                 default:
                     System.out.println("* NÃO EXISTE ESTA OPÇÃO.");
                     break;
             }
         }
-        
         sc.close();
         arq.close();
     }
