@@ -4,7 +4,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Animes{
     // Atributos
@@ -147,7 +146,11 @@ public class Animes{
         dos.writeInt(this.year.getMes());  // Mês
         dos.writeInt(this.year.getAno()); // Ano
 
-        dos.writeUTF(genres.toString()); 
+        dos.writeInt(this.genres.size());
+        for (String genre : this.genres) {
+            dos.writeUTF(genre);
+        }
+
         dos.writeUTF(this.season);
         dos.writeUTF(this.studio);
 
@@ -164,7 +167,7 @@ public class Animes{
 
         byte[] typeBytes = new byte[5]; 
         dis.readFully(typeBytes); 
-        this.type = new String(typeBytes).trim();
+        this.type = new String(typeBytes);
 
         this.episodes = dis.readShort();
         this.rating = dis.readFloat();
@@ -174,11 +177,15 @@ public class Animes{
         int ano = dis.readInt();  
         this.year = new MyDate(dia, mes, ano);  // Reconstroi o objeto MyDate
 
-        this.genres = new ArrayList<>(Arrays.asList(dis.readUTF().split(", ")));
+        // Lê o número de gêneros
+        int numGenres = dis.readInt();
+        this.genres = new ArrayList<>();
+        for (int i = 0; i < numGenres; i++) {
+            this.genres.add(dis.readUTF());
+        }
 
         this.season = dis.readUTF();
         this.studio = dis.readUTF();
-
     }
 
     public int getId() {

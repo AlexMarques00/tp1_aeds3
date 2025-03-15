@@ -12,9 +12,10 @@ para cada objeto:
     string type (tam = 5 bytes)
     short episodes
     float rating
-    short year
-    short tamanho dos genres
-    string genres ("Drama, Romance")
+    int year (dia/mes/ano)
+    int quantidade de genres
+    short tamanho dos genres (para cada genero)
+    string genres ("Drama")
     short tamanho da season
     string season
     short tamanho do studio

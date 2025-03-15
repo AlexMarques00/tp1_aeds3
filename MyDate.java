@@ -56,4 +56,13 @@ public class MyDate {
         return new MyDate(this.dia, this.mes, this.ano);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        MyDate myDate = (MyDate) obj;
+        return dia == myDate.dia && mes == myDate.mes && ano == myDate.ano;
+    }
 }
