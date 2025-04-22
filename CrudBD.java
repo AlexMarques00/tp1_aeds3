@@ -18,8 +18,13 @@ public class CrudBD {
         boolean keepGoing = true;
         Animes novo_anime;
 
-        System.out.print("        * DIGITE O NOME DO ARQUIVO QUE DESEJA ALTERAR: ");
-        Arquivo arq = new Arquivo(sc.nextLine());
+        Arquivo arq = new Arquivo("animeDataBase.db");
+
+        //HashExtensivo arq1 = new HashExtensivo("HashExtensivo.db");
+
+        ArvoreBMais arq2 = new ArvoreBMais("ArvoreB.db", 10);
+
+        ListaInvertida arq3 = new ListaInvertida("ListaInvertida.db");
 
         while (keepGoing) {
 
@@ -74,13 +79,13 @@ public class CrudBD {
                     id = arq.arq.readInt() + 1;
 
                     novo_anime = new Animes(id, name, type, episodes, rating, year, genres, season, studio);
-                    arq.create(novo_anime);
 
+                    arq.create(novo_anime, arq2);
+ 
                     arq.arq.seek(0);
                     arq.arq.writeInt(id);
                     System.out.println("* ANIME ADICIONADO COM SUCESSO! (ID: " + id + ")");
                     break;
-
                 case 2:
                     System.out.println("        * DIGITE 1 SE DESEJA FAZER UMA BUSCA POR ID");
                     System.out.println("        * DIGITE 2 SE DESEJA FAZER UMA BUSCA POR NOME");
@@ -99,12 +104,12 @@ public class CrudBD {
                             System.out.print("* DIGITE O ID DO ANIME QUE DESEJA BUSCAR: ");
                             id = sc.nextInt();
                             sc.nextLine();
-                            arq.read(id, null, opcaoFiltro);
+                            arq.read(id, null, opcaoFiltro, arq2, arq3);
                             break;
                         case 2:
                             System.out.print("* DIGITE O NOME DO ANIME QUE DESEJA BUSCAR: ");
                             name = sc.nextLine();
-                            arq.read(0, name, opcaoFiltro);
+                            arq.read(0, name, opcaoFiltro, arq2, arq3);
                             break;
                         case 3:
                             System.out.print("* DIGITE O TIPO DE MÍDIA (TAMANHO FIXO DE 5 BYTES): ");
@@ -221,7 +226,7 @@ public class CrudBD {
                     studio = sc.nextLine();
 
                     novo_anime = new Animes(id, name, type, episodes, rating, year, genres, season, studio);
-                    boolean updated = arq.update(novo_anime);
+                    boolean updated = arq.update(novo_anime, arq2);
 
                     if (!updated) {
                         System.out.println("* ESSE ELEMENTO NÃO EXISTE MAIS OU NUNCA EXISTIU!");
@@ -233,7 +238,7 @@ public class CrudBD {
                     id = sc.nextInt();
                     sc.nextLine();
 
-                    boolean deleted = arq.delete(id);
+                    boolean deleted = arq.delete(id, arq2);
                     if (!deleted) {
                         System.out.println("* ESSE ELEMENTO JÁ FOI EXCLUÍDO!");
                     } else {
@@ -251,5 +256,6 @@ public class CrudBD {
             }
         }
         arq.close();
+        arq2.close();
     }
 }

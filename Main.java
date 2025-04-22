@@ -14,7 +14,7 @@ public class Main {
             System.out.println("              MENU EDIÇÃO ARQUIVO               ");
             System.out.println("        * DIGITE 1 PARA LER ARQUIVO CSV         ");
             System.out.println("        * DIGITE 2 PARA ABRIR MENU CRUD         ");
-            System.out.println("        * DIGITE 3 PARA ABRIR MENU ORDENAÇĀO    ");
+            System.out.println("        * DIGITE 3 PARA ABRIR MENU ORDENAÇĀO (INDISPONÍVEL)");
             System.out.println("        * DIGITE 4 PARA APAGAR ARQUIVO    ");
             System.out.println("        * DIGITE 0 PARA SAIR           ");
             System.out.println("--------------------------------------------------");
@@ -31,7 +31,7 @@ public class Main {
                     CrudBD.abrirCRUD();
                     break;
                 case 3:
-                    Ordenacao.abrirOrdenacao();
+                    //Ordenacao.abrirOrdenacao();
                     break;
                 case 4:
                     System.out.print("        * DIGITE O NOME DO ARQUIVO QUE DESEJA APAGAR: ");

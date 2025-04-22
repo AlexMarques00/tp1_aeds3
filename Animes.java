@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Animes{
+public class Animes {
     // Atributos
     // ID,Name,Type,Episodes,Rating,Realease_year,Genres,Release_season,Studio
     private int id;
@@ -48,7 +48,7 @@ public class Animes{
         if(this.episodes == 0) {
             System.out.println(
                 "[#" + id + " -> " + name + ": " + 
-                type + " - (Não Finalizado) - " + 
+                type.trim() + " - (Não Finalizado) - " + 
                 "Avaliação: " + rating + " - " + 
                 "Lançamento: " + year.toString() + " - " + 
                 "Gêneros: \"" + String.join(", ", genres) + "\" - " + 
@@ -58,7 +58,7 @@ public class Animes{
         } else {
             System.out.println(
                 "[#" + id + " -> " + name + ": " + 
-                type + " - " + episodes + " episódios - " + 
+                type.trim() + " - " + episodes + " episódios - " + 
                 "Avaliação: " + rating + " - " + 
                 "Lançamento: " + year.toString() + " - " + 
                 "Gêneros: \"" + String.join(", ", genres) + "\" - " + 
@@ -186,6 +186,38 @@ public class Animes{
 
         this.season = dis.readUTF();
         this.studio = dis.readUTF();
+    }
+
+    @Override
+    public Animes clone() throws CloneNotSupportedException {
+        Animes copia = new Animes();
+
+        copia.id = this.id;
+        copia.episodes = this.episodes;
+        copia.rating = this.rating;
+        copia.name = this.name;
+        copia.type = this.type;
+        copia.season = this.season;
+        copia.studio = this.studio;
+        copia.year = this.year.clone(); // Clona a data
+
+        // Clona a lista de gêneros
+        copia.genres = new ArrayList<>();
+        for (String genero : this.genres) {
+            copia.genres.add(genero);
+        }
+
+        return copia;
+    }
+
+    public int size() {
+        int size = 0;  
+        size += 4; // id
+        return size;
+    }
+       
+    public int compareTo(int outro) {
+        return Integer.compare(this.id, outro);
     }
 
     public int getId() {
