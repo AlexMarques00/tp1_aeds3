@@ -1,5 +1,3 @@
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.RandomAccessFile;
 
 public class ListaInvertida {
@@ -9,18 +7,7 @@ public class ListaInvertida {
         arq = new RandomAccessFile(path, "rw");
     }
 
-    public static byte[] toByteArray() throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(baos);
-
-        return baos.toByteArray();
-    }
-
-    public void fromByteArray(byte[] ba) throws Exception {
-
-    }
-
-    public void create(Animes anime) {
+    public void create(Animes anime, long offset) {
 
     }
 
@@ -28,11 +15,11 @@ public class ListaInvertida {
 
     }
 
-    public void update(Animes anime) {
+    public void delete(int id, long offset) {
 
     }
 
-    public void delete(int id) {
-
+    public void close() throws Exception {
+        arq.close();
     }
 }

@@ -20,11 +20,11 @@ public class CrudBD {
 
         Arquivo arq = new Arquivo("animeDataBase.db");
 
-        //HashExtensivo arq1 = new HashExtensivo("HashExtensivo.db");
+        HashExtensivo hash = new HashExtensivo(10);
 
-        ArvoreBMais arq2 = new ArvoreBMais("ArvoreB.db", 10);
+        ArvoreBMais arvore = new ArvoreBMais("ArvoreB.db", 10);
 
-        ListaInvertida arq3 = new ListaInvertida("ListaInvertida.db");
+        ListaInvertida lista = new ListaInvertida("ListaInvertida.db");
 
         while (keepGoing) {
 
@@ -80,22 +80,23 @@ public class CrudBD {
 
                     novo_anime = new Animes(id, name, type, episodes, rating, year, genres, season, studio);
 
-                    arq.create(novo_anime, arq2);
+                    arq.create(novo_anime, arvore, hash, lista);
  
                     arq.arq.seek(0);
                     arq.arq.writeInt(id);
                     System.out.println("* ANIME ADICIONADO COM SUCESSO! (ID: " + id + ")");
                     break;
                 case 2:
-                    System.out.println("        * DIGITE 1 SE DESEJA FAZER UMA BUSCA POR ID");
-                    System.out.println("        * DIGITE 2 SE DESEJA FAZER UMA BUSCA POR NOME");
-                    System.out.println("        * DIGITE 3 SE DESEJA FILTRAR POR TIPO");
-                    System.out.println("        * DIGITE 4 SE DESEJA FILTRAR POR ESTAÇÃO DO ANO");
-                    System.out.println("        * DIGITE 5 SE DESEJA FILTRAR POR DATA DE LANÇAMENTO");
-                    System.out.println("        * DIGITE 6 SE DESEJA FILTRAR POR NÚMERO DE EPISÓDIOS");
-                    System.out.println("        * DIGITE 7 SE DESEJA FILTRAR POR NOTA");
-                    System.out.println("        * DIGITE 8 SE DESEJA FILTRAR POR ESTÚDIO");
-                    System.out.println("        * DIGITE 9 SE DESEJA FILTRAR POR GÊNERO");
+                    System.out.println("        * DIGITE 1 SE DESEJA FAZER UMA BUSCA POR ID (ARVORE B+)");
+                    System.out.println("        * DIGITE 2 SE DESEJA FAZER UMA BUSCA POR ID (HASH EXTENSÍVEL)");
+                    System.out.println("        * DIGITE 3 SE DESEJA FAZER UMA BUSCA POR NOME (LISTA INVERTIDA)");
+                    //System.out.println("        * DIGITE 4 SE DESEJA FILTRAR POR TIPO");
+                    //System.out.println("        * DIGITE 5 SE DESEJA FILTRAR POR ESTAÇÃO DO ANO");
+                    //System.out.println("        * DIGITE 6 SE DESEJA FILTRAR POR DATA DE LANÇAMENTO");
+                    //System.out.println("        * DIGITE 7 SE DESEJA FILTRAR POR NÚMERO DE EPISÓDIOS");
+                    //System.out.println("        * DIGITE 8 SE DESEJA FILTRAR POR NOTA");
+                    //System.out.println("        * DIGITE 9 SE DESEJA FILTRAR POR ESTÚDIO");
+                    //System.out.println("        * DIGITE 10 SE DESEJA FILTRAR POR GÊNERO");
                     System.out.print("* ENTRADA: ");
                     int opcaoFiltro = Integer.parseInt(sc.nextLine());
 
@@ -104,14 +105,20 @@ public class CrudBD {
                             System.out.print("* DIGITE O ID DO ANIME QUE DESEJA BUSCAR: ");
                             id = sc.nextInt();
                             sc.nextLine();
-                            arq.read(id, null, opcaoFiltro, arq2, arq3);
+                            arq.read(id, null, opcaoFiltro, arvore, null, null);
                             break;
                         case 2:
-                            System.out.print("* DIGITE O NOME DO ANIME QUE DESEJA BUSCAR: ");
-                            name = sc.nextLine();
-                            arq.read(0, name, opcaoFiltro, arq2, arq3);
+                            System.out.print("* DIGITE O ID DO ANIME QUE DESEJA BUSCAR: ");
+                            id = sc.nextInt();
+                            sc.nextLine();
+                            arq.read(id, null, opcaoFiltro, null, null, hash);
                             break;
                         case 3:
+                            System.out.print("* DIGITE O NOME DO ANIME QUE DESEJA BUSCAR: ");
+                            name = sc.nextLine();
+                            arq.read(0, name, opcaoFiltro, null, lista, null);
+                            break;
+                        case 4:
                             System.out.print("* DIGITE O TIPO DE MÍDIA (TAMANHO FIXO DE 5 BYTES): ");
                             type = sc.nextLine();
                             conjunto = arq.filtrar(null, type, opcaoFiltro, 0, 0);
@@ -121,7 +128,7 @@ public class CrudBD {
                                 System.out.println(name);
                             }
                             break;
-                        case 4:
+                        case 5:
                             System.out.print("* DIGITE A ESTAÇÃO DO ANO DE LANÇAMENTO: ");
                             season = sc.nextLine();
                             conjunto = arq.filtrar(null, season, opcaoFiltro, 0, 0);
@@ -131,7 +138,7 @@ public class CrudBD {
                                 System.out.println(name);
                             }
                             break;
-                        case 5:
+                        case 6:
                             System.out.print("* DIGITE A DATA (DD MM AAAA): ");
                             dataFiltro = sc.nextLine().split(" ");
                             year = new MyDate(Integer.parseInt(dataFiltro[0]), Integer.parseInt(dataFiltro[1]),
@@ -144,7 +151,7 @@ public class CrudBD {
                                 System.out.println(name);
                             }
                             break;
-                        case 6:
+                        case 7:
                             System.out.print("* DIGITE O NÚMERO DE EPISÓDIOS: ");
                             episodes = sc.nextInt();
                             conjunto = arq.filtrar(null, null, opcaoFiltro, episodes, 0);
@@ -154,7 +161,7 @@ public class CrudBD {
                                 System.out.println(name);
                             }
                             break;
-                        case 7:
+                        case 8:
                             System.out.print("* DIGITE A NOTA: ");
                             rating = sc.nextFloat();
                             conjunto = arq.filtrar(null, null, opcaoFiltro, 0, rating);
@@ -164,7 +171,7 @@ public class CrudBD {
                                 System.out.println(name);
                             }
                             break;
-                        case 8:
+                        case 9:
                             System.out.print("* DIGITE O ESTÚDIO DE CRIAÇĀO: ");
                             studio = sc.nextLine();
                             conjunto = arq.filtrar(null, studio, opcaoFiltro, 0, 0);
@@ -174,7 +181,7 @@ public class CrudBD {
                                 System.out.println(name);
                             }
                             break;
-                        case 9:
+                        case 10:
                             System.out.print("* DIGITE O GÊNERO: ");
                             genre = sc.nextLine();
                             conjunto = arq.filtrar(null, genre, opcaoFiltro, 0, 0);
@@ -226,19 +233,68 @@ public class CrudBD {
                     studio = sc.nextLine();
 
                     novo_anime = new Animes(id, name, type, episodes, rating, year, genres, season, studio);
-                    boolean updated = arq.update(novo_anime, arq2);
+
+                    System.out.println("        * DIGITE 1 SE DESEJA FAZER UM UPDATE USANDO ARVORE B+");
+                    System.out.println("        * DIGITE 2 SE DESEJA FAZER UM UPTADE USANDO HASH EXTENSIVO");
+                    System.out.println("        * DIGITE 3 SE DESEJA FAZER UM UPDATE USANDO LISTA INVERTIDA");
+                    System.out.print("* ENTRADA: ");
+                    opcaoFiltro = Integer.parseInt(sc.nextLine());
+                    boolean updated = false;
+
+                    switch (opcaoFiltro) {
+                        case 1:
+                            updated = arq.update(novo_anime, arvore, hash, lista, opcaoFiltro);
+                            break;
+                        case 2:
+                            updated = arq.update(novo_anime, arvore, hash, lista, opcaoFiltro);
+                            break;
+                        case 3:
+                            updated = arq.update(novo_anime, arvore, hash, lista, opcaoFiltro);
+                            break;
+                        default:
+                            System.out.println("* NÃO EXISTE ESTA OPÇÃO.");
+                            break;
+                    }
 
                     if (!updated) {
                         System.out.println("* ESSE ELEMENTO NÃO EXISTE MAIS OU NUNCA EXISTIU!");
                     }
                     break;
-
+            
                 case 4:
-                    System.out.print("* DIGITE O ID DO ANIME QUE DESEJA DELETAR: ");
-                    id = sc.nextInt();
-                    sc.nextLine();
+                    System.out.println("        * DIGITE 1 SE DESEJA DELETAR USANDO ARVORE B+");
+                    System.out.println("        * DIGITE 2 SE DESEJA DELETAR USANDO HASH EXTENSIVO");
+                    System.out.println("        * DIGITE 3 SE DESEJA DELETAR USANDO LISTA INVERTIDA");
+                    System.out.print("* ENTRADA: ");
+                    opcaoFiltro = Integer.parseInt(sc.nextLine());
+                    boolean deleted = false;
 
-                    boolean deleted = arq.delete(id, arq2);
+                    switch (opcaoFiltro) {
+                        case 1:
+                            System.out.print("* DIGITE O ID DO ANIME QUE DESEJA DELETAR: ");
+                            id = sc.nextInt();
+                            sc.nextLine();
+
+                            deleted = arq.delete(id, null, arvore, hash, lista, opcaoFiltro);
+                            break;
+                        case 2:
+                            System.out.print("* DIGITE O ID DO ANIME QUE DESEJA DELETAR: ");
+                            id = sc.nextInt();
+                            sc.nextLine();
+                            
+                            deleted = arq.delete(id, null, arvore, hash, lista, opcaoFiltro);
+                            break;
+                        case 3:
+                            System.out.print("* DIGITE O NOME DO ANIME QUE DESEJA DELETAR: ");
+                            name = sc.nextLine();
+
+                            deleted = arq.delete(0 , name, arvore, hash, lista, opcaoFiltro);
+                            break;
+                        default:
+                            System.out.println("* NÃO EXISTE ESTA OPÇÃO.");
+                            break;
+                    }
+
                     if (!deleted) {
                         System.out.println("* ESSE ELEMENTO JÁ FOI EXCLUÍDO!");
                     } else {
@@ -255,7 +311,10 @@ public class CrudBD {
                     break;
             }
         }
+
         arq.close();
-        arq2.close();
+        arvore.close();
+        lista.close();
+        hash.close();
     }
 }

@@ -1,4 +1,3 @@
-import java.io.DataOutputStream;
 import java.io.RandomAccessFile;
 
 public class ReadCSV {
@@ -9,14 +8,14 @@ public class ReadCSV {
         RandomAccessFile dos = new RandomAccessFile("animeDataBase.db", "rw");
         dos.writeInt(18495);
 
-        //FileOutputStream arq1 = new FileOutputStream("HashExtensivo.db");
-        //DataOutputStream dos1 = new DataOutputStream(arq1);
-
-        //FileOutputStream arq3 = new FileOutputStream("ListaInvertida.db");
-        //DataOutputStream dos3 = new DataOutputStream(arq3);
-
         // Cria a árvore B com ordem, por exemplo, 10
         ArvoreBMais arvoreB = new ArvoreBMais("ArvoreB.db", 10);
+
+        // Cria o Hash
+        HashExtensivo hash = new HashExtensivo(10);
+
+        // Cria a Lista
+        ListaInvertida lista = new ListaInvertida("ListaInvertida.db");
        
 
         String input = csv.readLine();
@@ -25,14 +24,15 @@ public class ReadCSV {
             Animes animeTmp = new Animes(input);
 
             long offset = addToDatabase(dos, animeTmp);
-            //addToHash(dos1, animeTmp);
-            //addToLista(dos3, animeTmp);
+            addToHash(hash, animeTmp, offset);
+            addToLista(lista, animeTmp, offset);
             addToArvore(arvoreB, animeTmp, offset);
 
             input = csv.readLine();
         }
 
         arvoreB.print();
+        hash.print();
         System.out.println();
         System.out.println("* CSV LIDO, DB E ARQUIVOS DE INDICE CRIADOS COM SUCESSO!");
         System.out.println("* NOME DO ARQUIVO DB INICIAL: animeDataBase.db");
@@ -56,10 +56,12 @@ public class ReadCSV {
         return offset;
     }
 
-    public static void addToHash(DataOutputStream dos, Animes anime) throws Exception {
+    public static void addToHash(HashExtensivo hash, Animes anime, long offset) throws Exception {
+        hash.create(anime.getId(), offset);
     }
 
-    public static void addToLista(DataOutputStream dos, Animes anime) throws Exception {
+    public static void addToLista(ListaInvertida lista, Animes anime, long offset) throws Exception {
+        lista.create(anime, offset);
     }
 
     public static void addToArvore(ArvoreBMais arvoreB, Animes anime, long offset) throws Exception {

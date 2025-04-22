@@ -49,7 +49,7 @@ public class Pagina {
             out.writeInt(this.elementos.get(i));
             
             // Só escreve offset se for folha
-            if (isFolha) {
+            if (isFolha && i < this.offsets.size()) {
                 out.writeLong(this.offsets.get(i));
             } else {
                 out.writeLong(-1); // Placeholder para nós internos
@@ -102,14 +102,14 @@ public class Pagina {
             }
         }
     
-        // Lê o ÚLTIMO FILHO (sempre existe, mesmo quando n=0)
+        // Lê o ÚLTIMO FILHO
         int ultimoFilho = in.readInt();
         this.filhos.add(ultimoFilho);
     
         // Determina se é folha (todos os filhos são -1)
         isFolha = isFolha && (ultimoFilho == -1);
     
-        // Lê os REGISTROS VAZIOS (padding)
+        // Lê os REGISTROS VAZIOS
         int remaining = this.maxElementos - n;
         for (int i = 0; i < remaining; i++) {
             in.readInt(); // filho vazio

@@ -8,8 +8,7 @@ public class ArvoreBMais {
     private int maxElementos = 0; // Variável igual a ordem - 1 para facilitar a clareza do código
     private int maxFilhos = 0; // Variável igual a ordem para facilitar a clareza do código
 
-    // Variáveis usadas nas funções recursivas (já que não é possível passar valores
-    // por referência)
+    // Variáveis usadas nas funções recursivas (já que não é possível passar valores por referência)
     private Animes elemAux;
     private long enderecoAux;
     private int paginaAux;
@@ -17,7 +16,6 @@ public class ArvoreBMais {
     private boolean diminuiu;
 
     public ArvoreBMais (String path, int ordem) throws Exception {
-         // Inicializa os atributos da árvore
          this.ordem = ordem;
          this.maxElementos = ordem - 1;
          this.maxFilhos = ordem;
@@ -38,8 +36,6 @@ public class ArvoreBMais {
         return raiz == -1;
     }
 
-    // Inclusão de novos elementos na árvore. A inclusão é recursiva. A primeira
-    // função chama a segunda recursivamente, passando a raiz como referência.
     public boolean create(Animes elem, long enderecoDB) throws Exception {
 
         // Carrega a raiz
@@ -101,7 +97,6 @@ public class ArvoreBMais {
         return inserido;
     }
 
-    // Função recursiva de inclusão. A função passa uma página de referência.
     // As inclusões são sempre feitas em uma folha.
     private boolean create1(long pagina) throws Exception {
 
@@ -161,11 +156,10 @@ public class ArvoreBMais {
             pa.elementos.add(i, elemAux.getId());
             // Só adiciona offset se for folha
             if (pa.filhos.get(0) == -1) {  // Se for folha
-                if (pa.offsets.size() <= i) {
-                    pa.offsets.add(i, enderecoAux);
-                } else {
-                    pa.offsets.set(i, enderecoAux);
+                while (pa.offsets.size() < pa.elementos.size()) {
+                    pa.offsets.add(-1L); // Preenche com valores padrão se necessário
                 }
+                pa.offsets.set(i, enderecoAux); 
             }
 
             pa.filhos.add(i + 1, paginaAux);
@@ -332,10 +326,6 @@ public class ArvoreBMais {
         }
     }
 
-    // Remoção elementos na árvore. A remoção é recursiva. A primeira
-    // função chama a segunda recursivamente, passando a raiz como referência.
-    // Eventualmente, a árvore pode reduzir seu tamanho, por meio da exclusão da
-    // raiz.
     public boolean delete(int id) throws Exception {
 
         // Encontra a raiz da árvore
@@ -381,7 +371,6 @@ public class ArvoreBMais {
         return excluido;
     }
 
-    // Função recursiva de exclusão. A função passa uma página de referência.
     // As exclusões são sempre feitas em folhas e a fusão é propagada para cima.
     private boolean delete1(int id, long pagina) throws Exception {
 
@@ -584,8 +573,6 @@ public class ArvoreBMais {
         return excluido;
     }
 
-    // Imprime a árvore, usando uma chamada recursiva.
-    // A função recursiva é chamada com uma página de referência (raiz)
     public void print() throws Exception {
         long raiz;
         arq.seek(0);
