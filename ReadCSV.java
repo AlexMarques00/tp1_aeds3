@@ -1,6 +1,12 @@
 import java.io.RandomAccessFile;
+import java.util.Scanner;
 
 public class ReadCSV {
+    public static Scanner sc = new Scanner(System.in);
+    public static int ordem = 0;
+    public static int elementosCesto = 0;
+    public static int elementosBloco = 0;
+
     public static void lerCSV() throws Exception {
         RandomAccessFile csv = new RandomAccessFile("BaseAnimes.csv", "rw");
         csv.readLine();
@@ -8,14 +14,23 @@ public class ReadCSV {
         RandomAccessFile dos = new RandomAccessFile("animeDataBase.db", "rw");
         dos.writeInt(18495);
 
+        System.out.print("* DIGITE A ORDEM DA ÂRVORE B+: ");
+        ordem = sc.nextInt();
+        sc.nextLine();
         // Cria a árvore B com ordem, por exemplo, 10
-        ArvoreBMais arvoreB = new ArvoreBMais("ArvoreB.db", 10);
+        ArvoreBMais arvoreB = new ArvoreBMais("ArvoreB.db", ordem);
 
+        System.out.print("* DIGITE A QUANTIDADE DE ELEMENTOS POR CESTO DO HASH EXTENSIVEL: ");
+        elementosCesto = sc.nextInt();
+        sc.nextLine();
         // Cria o Hash
-        HashExtensivo hash = new HashExtensivo(10);
+        HashExtensivo hash = new HashExtensivo(elementosCesto);
 
+        System.out.print("* DIGITE A QUANTIDADE DE ELEMENTOS POR BLOCO DA LISTA INVERTIDA: ");
+        elementosBloco = sc.nextInt();
+        sc.nextLine();
         // Cria a Lista
-        ListaInvertida lista = new ListaInvertida("ListaInvertida.db");
+        ListaInvertida lista = new ListaInvertida(elementosBloco);
        
 
         String input = csv.readLine();
@@ -33,12 +48,17 @@ public class ReadCSV {
 
         arvoreB.print();
         hash.print();
+        lista.print();
+
         System.out.println();
         System.out.println("* CSV LIDO, DB E ARQUIVOS DE INDICE CRIADOS COM SUCESSO!");
         System.out.println("* NOME DO ARQUIVO DB INICIAL: animeDataBase.db");
         System.out.println();
 
         dos.close();
+        hash.close();
+        arvoreB.close();
+        lista.close();
         csv.close();
     }
 
@@ -66,5 +86,17 @@ public class ReadCSV {
 
     public static void addToArvore(ArvoreBMais arvoreB, Animes anime, long offset) throws Exception {
         arvoreB.create(anime, offset);     
+    }
+
+    public static int getOrdem() {
+        return ordem;
+    }
+
+    public static int getElementosCesto() {
+        return elementosCesto;
+    }
+
+    public static int getElementosBloco() {
+        return elementosBloco;
     }
 }

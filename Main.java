@@ -9,15 +9,15 @@ public class Main {
 
         while (keepGoing) {
 
-            System.out.println("--------------------------------------------------");
+            System.out.println("--------------------------------------------------------------");
             System.out.println();
             System.out.println("              MENU EDIÇÃO ARQUIVO               ");
-            System.out.println("        * DIGITE 1 PARA LER ARQUIVO CSV         ");
+            System.out.println("        * DIGITE 1 PARA LER ARQUIVO CSV E ARQUIVOS DE ÍNDICE         ");
             System.out.println("        * DIGITE 2 PARA ABRIR MENU CRUD         ");
             System.out.println("        * DIGITE 3 PARA ABRIR MENU ORDENAÇĀO (INDISPONÍVEL)");
             System.out.println("        * DIGITE 4 PARA APAGAR ARQUIVO    ");
             System.out.println("        * DIGITE 0 PARA SAIR           ");
-            System.out.println("--------------------------------------------------");
+            System.out.println("--------------------------------------------------------------");
             System.out.println();
 
             System.out.print("* ENTRADA: ");
