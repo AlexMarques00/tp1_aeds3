@@ -109,7 +109,7 @@ public class Arquivo {
                 offset = lista.read(novo_anime.getName());
                 break;
             case 4:
-                offset = arvore.read(novo_anime.getId());
+                offset = hash.read(novo_anime.getId());
                 break;
             default:
                 break;
@@ -146,6 +146,8 @@ public class Arquivo {
                 // Move o novo objeto para o final
                 offset = arq.length();
                 arq.seek(arq.length());
+                offset = arq.getFilePointer();
+        
                 arq.writeChar(' ');
                 arq.writeShort(objeto2.length);
                 arq.write(objeto2);
