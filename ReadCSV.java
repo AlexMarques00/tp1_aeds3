@@ -18,7 +18,7 @@ public class ReadCSV {
         ordem = sc.nextInt();
         sc.nextLine();
         // Cria a árvore B com ordem, por exemplo, 10
-        ArvoreBMais arvoreB = new ArvoreBMais("ArvoreB.db", ordem);
+        ArvoreBMais arvoreB = new ArvoreBMais("ArvoreB+.db", ordem);
 
         System.out.print("* DIGITE A QUANTIDADE DE ELEMENTOS POR CESTO DO HASH EXTENSIVEL: ");
         elementosCesto = sc.nextInt();
@@ -32,7 +32,6 @@ public class ReadCSV {
         // Cria a Lista
         ListaInvertida lista = new ListaInvertida(elementosBloco);
        
-
         String input = csv.readLine();
         while (input != null) {
             System.out.println(input);
@@ -46,9 +45,9 @@ public class ReadCSV {
             input = csv.readLine();
         }
 
-        arvoreB.print();
-        hash.print();
-        lista.print();
+        //arvoreB.print();
+        //hash.print();
+        //lista.print();
 
         System.out.println();
         System.out.println("* CSV LIDO, DB E ARQUIVOS DE INDICE CRIADOS COM SUCESSO!");

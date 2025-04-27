@@ -22,7 +22,7 @@ public class CrudBD {
 
         HashExtensivo hash = new HashExtensivo(ReadCSV.getElementosCesto());
 
-        ArvoreBMais arvore = new ArvoreBMais("ArvoreB.db", ReadCSV.getOrdem());
+        ArvoreBMais arvore = new ArvoreBMais("ArvoreB+.db", ReadCSV.getOrdem());
 
         ListaInvertida lista = new ListaInvertida(ReadCSV.getElementosBloco());
 
@@ -35,6 +35,7 @@ public class CrudBD {
             System.out.println("        * DIGITE 2 PARA READ           ");
             System.out.println("        * DIGITE 3 PARA UPDATE         ");
             System.out.println("        * DIGITE 4 PARA DELETE         ");
+            System.out.println("        * DIGITE 5 PARA VER ARQUIVOS DE INDICE         ");
             System.out.println("        * DIGITE 0 PARA SAIR           ");
             System.out.println("--------------------------------------------------");
             System.out.println();
@@ -113,7 +114,11 @@ public class CrudBD {
                 case 2:
                     System.out.println("        * DIGITE 1 SE DESEJA FAZER UMA BUSCA POR ID (ARVORE B+)");
                     System.out.println("        * DIGITE 2 SE DESEJA FAZER UMA BUSCA POR ID (HASH EXTENSÍVEL)");
-                    System.out.println("        * DIGITE 3 SE DESEJA FAZER UMA BUSCA POR NOME (LISTA INVERTIDA)");
+                    System.out.println("        * DIGITE 3 SE DESEJA FAZER UMA BUSCA POR ESTAÇÃO DO ANO (LISTA INVERTIDA)");
+                    System.out.println("        * DIGITE 4 SE DESEJA FAZER UMA BUSCA POR EPISÓDIOS (LISTA INVERTIDA)");
+                    System.out.println("        * DIGITE 5 SE DESEJA FAZER UMA BUSCA POR STUDIO (LISTA INVERTIDA)");
+                    System.out.println("        * DIGITE 6 SE DESEJA FAZER UMA BUSCA POR NOTA (LISTA INVERTIDA)");
+                    System.out.println("        * DIGITE 7 SE DESEJA BUSCAR POR MAIS DE UM ATRIBUTO (LISTA INVERTIDA)");
                     System.out.print("* ENTRADA: ");
                     opcaoFiltro = Integer.parseInt(sc.nextLine());
 
@@ -122,18 +127,45 @@ public class CrudBD {
                             System.out.print("* DIGITE O ID DO ANIME QUE DESEJA BUSCAR: ");
                             id = sc.nextInt();
                             sc.nextLine();
-                            arq.read(id, null, opcaoFiltro, arvore, null, null);
+                            arq.read(id, opcaoFiltro, arvore, null);
                             break;
                         case 2:
                             System.out.print("* DIGITE O ID DO ANIME QUE DESEJA BUSCAR: ");
                             id = sc.nextInt();
                             sc.nextLine();
-                            arq.read(id, null, opcaoFiltro, null, null, hash);
+                            arq.read(id, opcaoFiltro, null, hash);
                             break;
                         case 3:
-                            System.out.print("* DIGITE O NOME DO ANIME QUE DESEJA BUSCAR: ");
-                            name = sc.nextLine();
-                            arq.read(0, name, opcaoFiltro, null, lista, null);
+                            System.out.print("* DIGITE A ESTAÇÃO DO ANO DOS ANIMES QUE DESEJA BUSCAR: ");
+                            season = sc.nextLine();
+                            arq.readLista(-1, season, opcaoFiltro, -1, null, lista);
+                            break;
+                        case 4:
+                            System.out.print("* DIGITE O NÚMERO DE EPISÓDIOS DOS ANIMES QUE DESEJA BUSCAR: ");
+                            episodes = sc.nextInt();
+                            sc.nextLine();
+                            arq.readLista(episodes, null, opcaoFiltro, -1, null, lista);
+                            break;
+                        case 5:
+                            System.out.print("* DIGITE O ESTÚDIO DOS ANIMES QUE DESEJA BUSCAR: ");
+                            studio = sc.nextLine();
+                            arq.readLista(-1, null, opcaoFiltro, -1, studio, lista);
+                            break;
+                        case 6:
+                            System.out.print("* DIGITE A NOTA DOS ANIMES QUE DESEJA BUSCAR (MÁX: 5): ");
+                            rating = sc.nextFloat();
+                            sc.nextLine();
+                            arq.readLista(-1, null, opcaoFiltro, rating, null, lista);
+                            break;
+                        case 7:
+                            System.out.println("        * ===== ATRIBUTOS DISPONÍVEIS: ===== *");
+                            System.out.println("         season -- studio -- episodios -- nota");
+                            System.out.println();
+                            System.out.print("        * DIGITE O PRIMEIRO ATRIBUTO QUE DESEJA BUSCAR (LISTA INVERTIDA): ");
+                            String atributo1 = sc.nextLine();
+                            System.out.print("        * DIGITE O SEGUNDO ATRIBUTO QUE DESEJA BUSCAR (LISTA INVERTIDA) : ");
+                            String atributo2 = sc.nextLine();
+                            arq.readListaPlus(atributo1, atributo2, lista);
                             break;
                         default:
                             System.out.println("* NÃO EXISTE ESTA OPÇÃO.");
@@ -146,7 +178,7 @@ public class CrudBD {
                     id = sc.nextInt();
                     sc.nextLine();
 
-                    System.out.print("* DIGITE O NOME: ");
+                    System.out.print("* DIGITE O NOME NOVO: ");
                     name = sc.nextLine();
 
                     System.out.print("* DIGITE O TIPO DE MÍDIA (TAMANHO FIXO DE 5 BYTES): ");
@@ -216,6 +248,7 @@ public class CrudBD {
                     System.out.println("        * DIGITE 2 SE DESEJA DELETAR DO HASH EXTENSIVO");
                     System.out.println("        * DIGITE 3 SE DESEJA DELETAR DA LISTA INVERTIDA");
                     System.out.println("        * DIGITE 4 SE DESEJA DELETAR DOS TRÊS");
+                    System.out.println("        * DIGITE 5 SE DESEJA DELETAR ANIMES POR ATRIBUTO");
                     System.out.print("* ENTRADA: ");
                     opcaoFiltro = Integer.parseInt(sc.nextLine());
                     boolean deleted = false;
@@ -226,30 +259,37 @@ public class CrudBD {
                             id = sc.nextInt();
                             sc.nextLine();
 
-                            deleted = arq.delete(id, null, arvore, hash, lista, opcaoFiltro);
+                            deleted = arq.delete(id, arvore, hash, lista, opcaoFiltro);
                             break;
                         case 2:
                             System.out.print("* DIGITE O ID DO ANIME QUE DESEJA DELETAR: ");
                             id = sc.nextInt();
                             sc.nextLine();
                             
-                            deleted = arq.delete(id, null, arvore, hash, lista, opcaoFiltro);
+                            deleted = arq.delete(id, arvore, hash, lista, opcaoFiltro);
                             break;
                         case 3:
-                            System.out.print("* DIGITE O NOME DO ANIME QUE DESEJA DELETAR: ");
-                            name = sc.nextLine();
+                            System.out.print("* DIGITE O ID DO ANIME QUE DESEJA DELETAR: ");
+                            id = sc.nextInt();
+                            sc.nextLine();
 
-                            deleted = arq.delete(0 , name, arvore, hash, lista, opcaoFiltro);
+                            deleted = arq.delete(id , arvore, hash, lista, opcaoFiltro);
                             break;
                         case 4:
                             System.out.print("* DIGITE O ID DO ANIME QUE DESEJA DELETAR: ");
                             id = sc.nextInt();
                             sc.nextLine();
 
-                            System.out.print("* DIGITE O NOME DO ANIME QUE DESEJA DELETAR: ");
-                            name = sc.nextLine();
+                            deleted = arq.delete(id , arvore, hash, lista, opcaoFiltro);
+                            break;
+                        case 5:
+                            System.out.println("        * ===== ATRIBUTOS DISPONÍVEIS: ===== *");
+                            System.out.println("         season -- studio -- episodios -- nota");
+                            System.out.println();
+                            System.out.print("        * DIGITE O ATRIBUTO DOS ANIMES QUE DESEJA DELETAR (LISTA INVERTIDA): ");
+                            String atributo1 = sc.nextLine();
 
-                            deleted = arq.delete(id , name, arvore, hash, lista, opcaoFiltro);
+                            deleted = arq.deleteLista(atributo1, hash, lista);
                             break;
                         default:
                             System.out.println("* NÃO EXISTE ESTA OPÇÃO.");
@@ -262,7 +302,27 @@ public class CrudBD {
                         System.out.println("* O ELEMENTO FOI EXCLUÍDO COM SUCESSO");
                     }
                     break;
+                case 5:
+                    System.out.println("        * DIGITE 1 PARA VER ARVORE B+         ");
+                    System.out.println("        * DIGITE 2 PARA VER HASH EXTENSIVEL         ");
+                    System.out.println("        * DIGITE 3 PARA VER LISTA INVERTIDA         ");
+                    System.out.print("* ENTRADA: ");
+                    opcaoFiltro = Integer.parseInt(sc.nextLine());
 
+                    switch (opcaoFiltro) {
+                        case 1:
+                            arvore.print();;
+                            break;
+                        case 2:
+                            hash.print();
+                            break;
+                        case 3:
+                            lista.print();
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
                 case 0:
                     keepGoing = false;
                     break;
