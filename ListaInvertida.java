@@ -1,4 +1,5 @@
 import java.io.*;
+import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -327,10 +328,27 @@ public class ListaInvertida {
 
         // Fecha o arquivo antes da operação de substituição
         arqDicionario.close();
+        
+        // Tenta mover o arquivo temporário com repetições em caso de falha
+        boolean moved = false;
+        int maxAttempts = 5;
+        int attempts = 0;
+        long delay = 100; // milissegundos
 
-        // Substitui o arquivo original
-        Files.move(Paths.get("Dicionario_temp.db"), Paths.get("Dicionario.db"), StandardCopyOption.REPLACE_EXISTING);
-        Thread.sleep(1);
+        while (!moved && attempts < maxAttempts) {
+            try {
+                Files.move(Paths.get("Dicionario_temp.db"), Paths.get("Dicionario.db"), 
+                      StandardCopyOption.REPLACE_EXISTING);
+                moved = true;
+            } catch (FileSystemException e) {
+                attempts++;
+                if (attempts >= maxAttempts) {
+                throw e; // Lança exceção após ultima tentativa
+                }
+                Thread.sleep(delay);
+                delay *= 2; // Aumenta o intervalo entre tentativas
+            }
+        }
 
         // Reabre o arquivo atualizado
         arqDicionario = new RandomAccessFile("Dicionario.db", "rw");
