@@ -139,6 +139,7 @@ public class Bloco {
         return quantidade == quantMax;
     }
 
+    @Override
     public String toString() {
         String s = "\nQuantidade: " + quantidade + "\n| ";
         int i = 0;

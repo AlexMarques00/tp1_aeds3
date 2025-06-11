@@ -5,17 +5,17 @@ public class Main {
     public static void main(String args[]) throws Exception {
         Scanner sc = new Scanner(System.in);
         boolean keepGoing = true;
-        String name;
 
         while (keepGoing) {
 
-            System.out.println("--------------------------------------------------------------");
             System.out.println();
+            System.out.println("--------------------------------------------------------------");
             System.out.println("              MENU EDIÇÃO ARQUIVO               ");
             System.out.println("        * DIGITE 1 PARA LER ARQUIVO CSV E ARQUIVOS DE ÍNDICE         ");
             System.out.println("        * DIGITE 2 PARA ABRIR MENU CRUD         ");
-            System.out.println("        * DIGITE 3 PARA ABRIR MENU ORDENAÇĀO (INDISPONÍVEL)");
-            System.out.println("        * DIGITE 4 PARA APAGAR TODOS OS ARQUIVOS CRIADOS ");
+            System.out.println("        * DIGITE 3 PARA ABRIR MENU DE COMPRESSÃO        ");
+            System.out.println("        * DIGITE 4 PARA ABRIR MENU DE CASAMENTO DE PADRÃO        "); 
+            System.out.println("        * DIGITE 5 PARA APAGAR TODOS OS ARQUIVOS CRIADOS ");
             System.out.println("        * DIGITE 0 PARA SAIR           ");
             System.out.println("--------------------------------------------------------------");
             System.out.println();
@@ -31,9 +31,12 @@ public class Main {
                     CrudBD.abrirCRUD();
                     break;
                 case 3:
-                    //Ordenacao.abrirOrdenacao();
+                    Compressao.abrirCompressao();
                     break;
                 case 4:
+                    CasamentoPadrao.abrirCasamentoPadrao();
+                    break;
+                case 5:
                     File file1 = new File("animeDataBase.db");
                     file1.delete();
                     File file2 = new File("ArvoreB+.db");

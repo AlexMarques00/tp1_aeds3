@@ -328,8 +328,8 @@ public class ListaInvertida {
 
         // Fecha o arquivo antes da operação de substituição
         arqDicionario.close();
-        
-        // Tenta mover o arquivo temporário com repetições em caso de falha
+
+        // Tenta mover o arquivo temporário com repetições em caso de falha (Código feito para correção de erro no Windows 11 ao utilizar RamdomAcessFile)
         boolean moved = false;
         int maxAttempts = 5;
         int attempts = 0;

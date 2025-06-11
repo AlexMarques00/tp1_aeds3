@@ -14,7 +14,6 @@ public class CrudBD {
         String season;
         String studio;
         ArrayList<String> genres = new ArrayList<>();
-        ArrayList<Animes> conjunto = new ArrayList<>();
         boolean keepGoing = true;
         Animes novo_anime;
 
@@ -28,8 +27,8 @@ public class CrudBD {
 
         while (keepGoing) {
 
-            System.out.println("--------------------------------------------------");
             System.out.println();
+            System.out.println("--------------------------------------------------");
             System.out.println("              MENU CRUD                ");
             System.out.println("        * DIGITE 1 PARA CREATE         ");
             System.out.println("        * DIGITE 2 PARA READ           ");

@@ -12,8 +12,7 @@ public class Arquivo {
         arq = new RandomAccessFile(path, "rw");
     }
 
-    public void create(Animes anime, ArvoreBMais arvore, HashExtensivo hash, ListaInvertida lista, int tipo)
-            throws Exception {
+    public void create(Animes anime, ArvoreBMais arvore, HashExtensivo hash, ListaInvertida lista, int tipo) throws Exception {
         // Obtém a posição atual (offset) antes de escrever
         arq.seek(arq.length());
         long offset = arq.getFilePointer();
@@ -358,12 +357,16 @@ public class Arquivo {
 
         switch (tipo) {
             case 1:
-            case 4:
                 offset = arvore.read(id);
                 break;
             case 2:
+                offset = hash.read(id);
+                break;
             case 3:
                 offset = hash.read(id);
+                break;
+            case 4:
+                offset = arvore.read(id);
                 break;
             default:
                 break;
@@ -372,10 +375,8 @@ public class Arquivo {
         // Vai para posição
         if (offset < 0 || offset >= arq.length()) {
             System.out.println("* ERRO: ID NÃO ENCONTRADO OU OFFSET INVÁLIDO *");
-            System.out.println(offset);
             return false;
         }
-        System.out.println(offset);
         arq.seek(offset);
 
         lapide = arq.readChar();
@@ -505,5 +506,53 @@ public class Arquivo {
 
     public void close() throws Exception {
         arq.close();
+    }
+
+    public ArrayList<Integer> resgatarIdsValidos(ArrayList<Long> posicoes, String caminhoArquivo) throws Exception {
+        ArrayList<Integer> ids = new ArrayList<>();
+        try (RandomAccessFile raf = new RandomAccessFile(caminhoArquivo, "r")) {
+            raf.seek(0);
+            raf.readInt(); // Lê o cabeçalho do arquivo (número de registros)
+
+            long fileLength = raf.length();
+            int posIndex = 0;
+
+            // Ordena as posições para facilitar a busca sequencial
+            posicoes.sort(Long::compare);
+
+            while (raf.getFilePointer() < fileLength && posIndex < posicoes.size()) {
+                raf.getFilePointer();
+                char lapide = raf.readChar(); // 2 bytes
+                int tamanho = raf.readShort(); // 2 bytes
+                long objetoInicio = raf.getFilePointer();
+                long objetoFim = objetoInicio + tamanho;
+
+                // Checa se alguma posição do padrão está dentro deste objeto
+                boolean encontrou = false;
+                while (posIndex < posicoes.size() && posicoes.get(posIndex) < objetoFim) {
+                    if (posicoes.get(posIndex) >= objetoInicio && posicoes.get(posIndex) < objetoFim) {
+                        encontrou = true;
+                        posIndex++;
+                    } else if (posicoes.get(posIndex) < objetoInicio) {
+                        posIndex++;
+                    } else {
+                        break;
+                    }
+                }
+
+                if (encontrou && lapide != '*') {
+                    // Lê o objeto e extrai o id
+                    byte[] ba = new byte[tamanho];
+                    raf.read(ba);
+                    Animes anime = new Animes();
+                    anime.fromByteArray(ba);
+                    ids.add(anime.getId());
+                } else {
+                    // Pula o objeto
+                    raf.seek(objetoFim);
+                }
+            }
+        }
+        return ids;
     }
 }
