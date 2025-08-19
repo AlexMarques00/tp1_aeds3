@@ -1,5 +1,8 @@
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -7,9 +10,35 @@ import java.util.Scanner;
 public class Arquivo {
     public RandomAccessFile arq;
     public static Scanner sc = new Scanner(System.in);
+    private final boolean isArquivoCriptografado;
+    private final String caminhoArquivoOriginal;
 
     public Arquivo(String path) throws Exception {
-        arq = new RandomAccessFile(path, "rw");
+        // Detecta se é um arquivo criptografado pelo nome (Vigenère ou RSA)
+        this.isArquivoCriptografado = path.contains(".cripto.");
+        this.caminhoArquivoOriginal = path;
+        
+        if (isArquivoCriptografado) {
+            // Se for arquivo criptografado, cria uma versão temporária descriptografada
+            String arquivoTemporario;
+            if (path.contains(".cripto.rsa.")) {
+                arquivoTemporario = path.replace(".cripto.rsa.", ".temp.rsa.");
+            } else {
+                arquivoTemporario = path.replace(".cripto.", ".temp.");
+            }
+            
+            // Só cria o arquivo temporário se ele não existir ou se for mais antigo que o criptografado
+            File arquivoCripto = new File(path);
+            File arquivoTemp = new File(arquivoTemporario);
+            
+            if (!arquivoTemp.exists() || arquivoTemp.lastModified() < arquivoCripto.lastModified()) {
+                descriptografarArquivoCompleto(path, arquivoTemporario);
+            }
+            
+            arq = new RandomAccessFile(arquivoTemporario, "rw");
+        } else {
+            arq = new RandomAccessFile(path, "rw");
+        }
     }
 
     public void create(Animes anime, ArvoreBMais arvore, HashExtensivo hash, ListaInvertida lista, int tipo) throws Exception {
@@ -17,8 +46,18 @@ public class Arquivo {
         arq.seek(arq.length());
         long offset = arq.getFilePointer();
 
-        // LAPIDE + TAM + OBEJTO
-        byte[] objeto = anime.toByteArray();
+        // LAPIDE + TAM + OBJETO
+        byte[] objeto;
+        
+        // Se for arquivo criptografado, sempre usa dados normais (arquivo temp já é descriptografado)
+        // Se for arquivo normal, usa configuração do CRUD
+        if (isArquivoCriptografado) {
+            objeto = anime.toByteArray();
+        } else if (Animes.isCriptografiaHabilitada()) {
+            objeto = anime.toByteArrayCriptografado();
+        } else {
+            objeto = anime.toByteArray();
+        }
 
         arq.writeChar(' ');
         arq.writeShort(objeto.length);
@@ -75,6 +114,9 @@ public class Arquivo {
             // Lê os bytes do registro
             byte[] ba = new byte[tamanhoRegistro];
             arq.read(ba);
+            
+            // Como estamos trabalhando com arquivo já descriptografado ou normal
+            // sempre usamos fromByteArray normal
             anime.fromByteArray(ba);
 
             if (lapide != '*') {
@@ -504,8 +546,83 @@ public class Arquivo {
         return delete1;
     }
 
+    //Fecha o arquivo e se for criptografado, criptografa o arquivo temporário de volta
     public void close() throws Exception {
-        arq.close();
+        if (arq != null) {
+            arq.close();
+        }
+        
+        if (isArquivoCriptografado) {
+            // Criptografa o arquivo temporário de volta para o arquivo criptografado
+            String arquivoTemporario = caminhoArquivoOriginal.replace(".cripto.", ".temp.");
+            
+            // Verifica se o arquivo temporário existe antes de tentar criptografar
+            File arquivoTemp = new File(arquivoTemporario);
+            if (arquivoTemp.exists()) {
+                criptografarArquivoCompleto(arquivoTemporario, caminhoArquivoOriginal);
+                
+                // Remove o arquivo temporário após sucesso
+                Files.deleteIfExists(Paths.get(arquivoTemporario));
+            }
+        }
+    }
+    
+    //Criptografa um arquivo completo
+    private void criptografarArquivoCompleto(String arquivoOriginal, String arquivoCriptografado) throws Exception {
+        if (!Animes.isCriptografiaHabilitada()) {
+            throw new Exception("Criptografia não habilitada!");
+        }
+        
+        byte[] dados = Files.readAllBytes(Paths.get(arquivoOriginal));
+        byte[] dadosCriptografados;
+        
+        String tipoCriptografia = Animes.getTipoCriptografia();
+        if ("VIGENERE".equals(tipoCriptografia)) {
+            if (Animes.getChaveVigenere() == null || Animes.getChaveVigenere().isEmpty()) {
+                throw new Exception("Chave Vigenère não encontrada!");
+            }
+            Vigenere vigenere = new Vigenere(Animes.getChaveVigenere());
+            dadosCriptografados = vigenere.criptografar(dados);
+        } else if ("RSA".equals(tipoCriptografia)) {
+            RSA rsa = Animes.getRSAInstance();
+            if (rsa == null) {
+                throw new Exception("Instância RSA não encontrada!");
+            }
+            dadosCriptografados = rsa.criptografar(dados);
+        } else {
+            throw new Exception("Tipo de criptografia não reconhecido: " + tipoCriptografia);
+        }
+        
+        Files.write(Paths.get(arquivoCriptografado), dadosCriptografados);
+    }
+
+    //Descriptografa um arquivo completo para uso temporário
+    private void descriptografarArquivoCompleto(String arquivoCriptografado, String arquivoTemporario) throws Exception {
+        if (!Animes.isCriptografiaHabilitada()) {
+            throw new Exception("Criptografia não habilitada!");
+        }
+        
+        byte[] dadosCriptografados = Files.readAllBytes(Paths.get(arquivoCriptografado));
+        byte[] dadosDescriptografados;
+        
+        String tipoCriptografia = Animes.getTipoCriptografia();
+        if ("VIGENERE".equals(tipoCriptografia)) {
+            if (Animes.getChaveVigenere() == null || Animes.getChaveVigenere().isEmpty()) {
+                throw new Exception("Chave Vigenère não encontrada!");
+            }
+            Vigenere vigenere = new Vigenere(Animes.getChaveVigenere());
+            dadosDescriptografados = vigenere.descriptografar(dadosCriptografados);
+        } else if ("RSA".equals(tipoCriptografia)) {
+            RSA rsa = Animes.getRSAInstance();
+            if (rsa == null) {
+                throw new Exception("Instância RSA não encontrada!");
+            }
+            dadosDescriptografados = rsa.descriptografar(dadosCriptografados);
+        } else {
+            throw new Exception("Tipo de criptografia não reconhecido: " + tipoCriptografia);
+        }
+        
+        Files.write(Paths.get(arquivoTemporario), dadosDescriptografados);
     }
 
     public ArrayList<Integer> resgatarIdsValidos(ArrayList<Long> posicoes, String caminhoArquivo) throws Exception {
@@ -554,5 +671,25 @@ public class Arquivo {
             }
         }
         return ids;
+    }
+
+    //Método estático para limpar arquivos temporários órfãos
+    public static void limparArquivosTemporarios() {
+        String[] possiveisTemporarios = {
+            "animeDataBase.temp.db",
+            "animeDataBase.temp.rsa.db",
+            "animeDataBase.huff.temp.db",
+            "animeDataBase.huff.temp.rsa.db",
+            "animeDataBase.lzw.temp.db",
+            "animeDataBase.lzw.temp.rsa.db"
+        };
+        
+        for (String arquivo : possiveisTemporarios) {
+            try {
+                Files.deleteIfExists(Paths.get(arquivo));
+            } catch (Exception e) {
+                // Ignora erros na limpeza
+            }
+        }
     }
 }

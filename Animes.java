@@ -99,15 +99,15 @@ public class Animes {
 
         // Processa os generos (se existirem)
         if (buffer.length > 6 && !buffer[6].trim().isEmpty()) {
-            String genres = buffer[6].trim();
+            String genresString = buffer[6].trim();
 
             // Remove aspas se existirem (if recomendado por DeepSeek)
-            if (genres.startsWith("\"") && genres.endsWith("\"")) {
-                genres = genres.substring(1, genres.length() - 1);
+            if (genresString.startsWith("\"") && genresString.endsWith("\"")) {
+                genresString = genresString.substring(1, genresString.length() - 1);
             }
             
             // Divide os generos por virgula (caso haja mais de um)
-            String[] genresArray = genres.split(",");
+            String[] genresArray = genresString.split(",");
             for (String genre : genresArray) {
                 if (!genre.trim().isEmpty()) { // Adiciona apenas generos nao vazios
                     this.genres.add(genre.trim());
@@ -292,5 +292,86 @@ public class Animes {
         this.genres = genres;
     }
 
+    // Variáveis estáticas para controlar a criptografia
+    private static String chaveVigenere = null;
+    private static RSA rsaInstance = null;
+    private static boolean criptografiaHabilitada = false;
+    private static String tipoCriptografia = null; // "VIGENERE" ou "RSA"
+
+    //Habilita a criptografia Vigenère com a chave especificada
+    public static void habilitarCriptografia(String chave) {
+        chaveVigenere = chave.toUpperCase();
+        rsaInstance = null;
+        tipoCriptografia = "VIGENERE";
+        criptografiaHabilitada = true;
+    }
     
+    //Habilita a criptografia RSA com chaves geradas ou fornecidas
+    public static void habilitarCriptografiaRSA(RSA rsa) {
+        rsaInstance = rsa;
+        chaveVigenere = null;
+        tipoCriptografia = "RSA";
+        criptografiaHabilitada = true;
+    }
+    
+    //Desabilita a criptografia
+    public static void desabilitarCriptografia() {
+        chaveVigenere = null;
+        rsaInstance = null;
+        tipoCriptografia = null;
+        criptografiaHabilitada = false;
+    }
+    
+    //Verifica se a criptografia está habilitada
+    public static boolean isCriptografiaHabilitada() {
+        return criptografiaHabilitada && 
+               ((tipoCriptografia != null && tipoCriptografia.equals("VIGENERE") && chaveVigenere != null) ||
+                (tipoCriptografia != null && tipoCriptografia.equals("RSA") && rsaInstance != null));
+    }
+    
+    public static String getChaveVigenere() {
+        return chaveVigenere;
+    }
+    
+    public static RSA getRSAInstance() {
+        return rsaInstance;
+    }
+    
+    public static String getTipoCriptografia() {
+        return tipoCriptografia;
+    }
+    
+    //Método toByteArray com criptografia automática
+    public byte[] toByteArrayCriptografado() throws Exception {
+        byte[] dados = toByteArray();
+        
+        if (isCriptografiaHabilitada()) {
+            if (tipoCriptografia.equals("VIGENERE")) {
+                Vigenere vigenere = new Vigenere(chaveVigenere);
+                return vigenere.criptografar(dados);
+            } else if (tipoCriptografia.equals("RSA")) {
+                return rsaInstance.criptografar(dados);
+            }
+        }
+        
+        return dados;
+    }
+    
+    //Método fromByteArray com descriptografia automática
+    public void fromByteArrayDescriptografado(byte[] ba) throws IOException {
+        byte[] dados = ba;
+        
+        // Sempre tenta descriptografar quando chamado deste método
+        // pois significa que estamos lendo de um arquivo criptografado
+        if (isCriptografiaHabilitada()) {
+            if (tipoCriptografia.equals("VIGENERE") && chaveVigenere != null && !chaveVigenere.isEmpty()) {
+                Vigenere vigenere = new Vigenere(chaveVigenere);
+                dados = vigenere.descriptografar(ba);
+            } else if (tipoCriptografia.equals("RSA") && rsaInstance != null) {
+                dados = rsaInstance.descriptografar(ba);
+            }
+        }
+        
+        fromByteArray(dados);
+    }
 }
