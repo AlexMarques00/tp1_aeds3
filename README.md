@@ -53,7 +53,7 @@ TP_AED-sIII/
 ├── Vigenere.java                 # Criptografia Vigenère
 ├── RSA.java                      # Criptografia RSA
 ├── NoHuffman.java                # Nó da árvore de Huffman
-└── ...                           # Outros arquivos auxiliares
+└── FIM
 ```
 Cada arquivo Java representa uma estrutura de dados, algoritmo ou funcionalidade do sistema. Os arquivos .db e .csv são gerados/explorados em tempo de execução. O projeto é modular e cada funcionalidade pode ser acessada pelo menu principal (Main.java).
 
