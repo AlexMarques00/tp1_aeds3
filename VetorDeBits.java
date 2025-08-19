@@ -47,6 +47,7 @@ public class VetorDeBits {
         return vetor.size();
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         int len = length();

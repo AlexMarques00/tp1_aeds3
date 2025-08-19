@@ -28,7 +28,7 @@ public class ListaInvertida {
     private void carregarDicionario() throws IOException {
         dicionarioMap.clear();
         arqDicionario.seek(0);
-        int numEntidades = arqDicionario.readInt();
+        arqDicionario.readInt();
 
         while (arqDicionario.getFilePointer() < arqDicionario.length()) {
             String chave = arqDicionario.readUTF();

@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -5,6 +6,9 @@ public class CrudBD {
     public static Scanner sc = new Scanner(System.in);
 
     public static void abrirCRUD() throws Exception {
+        // Limpa arquivos temporários órfãos antes de iniciar
+        Arquivo.limparArquivosTemporarios();
+        
         int id;
         int episodes;
         MyDate year;
@@ -17,7 +21,16 @@ public class CrudBD {
         boolean keepGoing = true;
         Animes novo_anime;
 
-        Arquivo arq = new Arquivo("animeDataBase.db");
+        // Escolhe o arquivo baseado no status da criptografia
+        String nomeArquivo;
+        
+        if (Animes.isCriptografiaHabilitada()) {
+            nomeArquivo = escolherArquivoCriptografado();
+        } else {
+            nomeArquivo = "animeDataBase.db";
+        }
+        
+        Arquivo arq = new Arquivo(nomeArquivo);
 
         HashExtensivo hash = new HashExtensivo(ReadCSV.getElementosCesto());
 
@@ -37,6 +50,15 @@ public class CrudBD {
             System.out.println("        * DIGITE 5 PARA VER ARQUIVOS DE INDICE         ");
             System.out.println("        * DIGITE 0 PARA SAIR           ");
             System.out.println("--------------------------------------------------");
+            
+            // Mostra status da criptografia e arquivo em uso
+            if (Animes.isCriptografiaHabilitada()) {
+                String tipo = Animes.getTipoCriptografia();
+                System.out.println("  * CRIPTOGRAFIA: HABILITADA (" + tipo + ") | ARQUIVO: " + nomeArquivo);
+            } else {
+                System.out.println("  * CRIPTOGRAFIA: DESABILITADA | ARQUIVO: " + nomeArquivo);
+            }
+            System.out.println("  * (Configure criptografia no Menu Criptografia)");
             System.out.println();
 
             System.out.print("* ENTRADA: ");
@@ -332,9 +354,41 @@ public class CrudBD {
             }
         }
 
+        // Fecha o arquivo (se for criptografado, criptografa de volta)
         arq.close();
         arvore.close();
         lista.close();
         hash.close();
     }
+
+    //Método para escolher qual arquivo criptografado usar quando a criptografia estiver habilitada 
+    private static String escolherArquivoCriptografado() {
+        System.out.println();
+        String tipoCriptografia = Animes.getTipoCriptografia();
+        System.out.println("* CRIPTOGRAFIA " + tipoCriptografia + " HABILITADA - USANDO ARQUIVO ORIGINAL CRIPTOGRAFADO");
+        System.out.println("* NOTA: CRUD não suporta arquivos comprimidos criptografados");
+        
+        // Escolhe o arquivo baseado no tipo de criptografia
+        String arquivoCriptografado;
+        if ("VIGENERE".equals(tipoCriptografia)) {
+            arquivoCriptografado = "animeDataBase.cripto.db";
+        } else if ("RSA".equals(tipoCriptografia)) {
+            arquivoCriptografado = "animeDataBase.cripto.rsa.db";
+        } else {
+            // Fallback para Vigenère se tipo não reconhecido
+            arquivoCriptografado = "animeDataBase.cripto.db";
+        }
+        
+        File arquivo = new File(arquivoCriptografado);
+        if (!arquivo.exists()) {
+            System.out.println("* ERRO: ARQUIVO CRIPTOGRAFADO NÃO ENCONTRADO!");
+            System.out.println("* Crie o arquivo criptografado primeiro no Menu Criptografia");
+            System.out.println("* Usando arquivo não criptografado como fallback...");
+            return "animeDataBase.db"; // Fallback para arquivo não criptografado
+        }
+        
+        System.out.println("* ARQUIVO SELECIONADO: " + arquivoCriptografado);
+        return arquivoCriptografado;
+    }
+
 }

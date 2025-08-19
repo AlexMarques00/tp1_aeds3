@@ -79,8 +79,13 @@ public class ReadCSV {
         // Obtém a posição atual (offset) antes de escrever
         long offset = dos.getFilePointer();
 
-        // LAPIDE + TAM + OBJETO
-        byte[] objeto = anime.toByteArray();
+        // LAPIDE + TAM + OBJETO (com criptografia se habilitada)
+        byte[] objeto;
+        if (Animes.isCriptografiaHabilitada()) {
+            objeto = anime.toByteArrayCriptografado();
+        } else {
+            objeto = anime.toByteArray();
+        }
 
         dos.writeChar(' ');
         dos.writeShort(objeto.length); // Tamanho do registro em bytes
